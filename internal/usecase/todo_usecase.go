@@ -7,6 +7,8 @@
 	type TodoRepository interface{
 		GetAll() []todo.Todo
 		Create(todo.Todo) todo.Todo
+		Update(id int, update todo.Todo) (todo.Todo, error)
+		Delete(id int) error
 	}
 
 	type TodoUseCase struct{
@@ -27,3 +29,10 @@
 		return uc.repo.Create(t)
 	}
 
+	func( uc *TodoUseCase) UpdateTodo(id int, update todo.Todo) (todo.Todo, error){
+		return uc.repo.Update(id, update)
+	}
+
+	func (uc *TodoUseCase) DeleteTodo(id int) error {
+	return uc.repo.Delete(id)
+}
