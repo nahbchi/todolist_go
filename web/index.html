@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>To-do List</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      background: url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+      overflow-y: auto;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      backdrop-filter: blur(12px);
+      background-color: rgba(255,255,255,0.3);
+      z-index: -1;
+    }
+    .container {
+      margin-top: 3rem;
+      width: 100%;
+      max-width: 800px;
+      padding: 2.5rem 3rem 3rem 3rem;
+      background-color: #fff;
+      border-radius: 20px;
+      box-shadow:
+        0 8px 24px rgba(0,0,0,0.12),
+        inset 0 0 20px rgba(255,255,255,0.6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 14px solid transparent; 
+      font-weight: 700;
+      user-select: none;
+      position: relative;
+
+      background-clip: padding-box;
+    }
+
+    .container::before {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      top: -14px;
+      left: -14px;
+      right: -14px;
+      bottom: -14px;
+      border-radius: 28px;
+      background:
+        linear-gradient(45deg, #a0522d 25%, #deb887 50%, #8b4513 75%),
+        linear-gradient(-45deg, #8b4513 25%, #d2b48c 50%, #a0522d 75%);
+      background-blend-mode: multiply;
+      box-shadow:
+        inset 0 0 8px #5a331f,
+        0 0 12px rgba(0,0,0,0.2);
+      z-index: -1;
+      filter: contrast(1.3) saturate(1.2);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: #222;
+      font-weight: 900;
+      letter-spacing: 1.2px;
+      font-size: 2.5rem;
+      font-family: "Segoe UI Black", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    }
+    .input-group {
+      display: flex;
+      margin-bottom: 2rem;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 0 12px rgba(92,107,192,0.25);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 1rem 1.25rem;
+      border: none;
+      font-size: 1.2rem;
+      font-weight: 700;
+      outline: none;
+      color: #222;
+      background-color: #fefefe;
+      transition: background-color 0.3s;
+    }
+    input[type="text"]:focus {
+      background-color: #fff;
+      box-shadow: inset 0 0 6px #5c6bc0aa;
+    }
+    button {
+      padding: 1rem 1.5rem;
+      background-color: #5c6bc0;
+      color: white;
+      border: none;
+      font-weight: 700;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #3f51b5;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 800px;
+    }
+    li {
+      position: relative;
+      background: #fffde7;
+      border-radius: 16px;
+      padding: 2rem 1rem 1rem 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 180px;
+      box-shadow:
+        0 6px 15px rgba(0,0,0,0.12),
+        inset 0 0 15px #fff8c4;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1.15rem;
+      color: #222;
+      font-weight: 700;
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      user-select: text;
+    }
+    li::before {
+      content: "";
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle at center, #d32f2f 60%, transparent 61%);
+      border-radius: 50%;
+      box-shadow: 0 0 12px #d32f2fbb;
+      z-index: 10;
+      pointer-events: none;
+      filter: drop-shadow(0 1px 1px #7f0000);
+    }
+    .todo-text {
+      flex-grow: 1;
+      margin-bottom: 1rem;
+      overflow-wrap: break-word;
+      color: #222;
+      user-select: text;
+    }
+    .todo-text.done {
+      text-decoration: line-through;
+      color: #9e9e9e;
+      font-weight: 600;
+      user-select: none;
+    }
+    .done-btn {
+      padding: 0.5rem 1rem;
+      background-color: #81c784;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      align-self: flex-end;
+      font-weight: 700;
+      box-shadow: 0 3px 6px rgba(33,150,83,0.3);
+      transition: background-color 0.3s;
+      user-select: none;
+    }
+    .done-btn:hover {
+      background-color: #66bb6a;
+    }
+    .undo-btn {
+      background-color: #ffb74d;
+      box-shadow: 0 3px 6px rgba(255,167,38,0.3);
+    }
+    .undo-btn:hover {
+      background-color: #ffa726;
+    }
+    .fade-out {
+      opacity: 0;
+      transform: translateX(100px) rotate(15deg);
+      height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden;
+      transition: opacity 0.8s ease, transform 0.8s ease, height 0.5s ease, margin 0.5s ease, padding 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main" aria-label="Lista de tarefas">
+    <h1>To-do List</h1>
+    <div class="input-group">
+      <input id="todo-title" type="text" placeholder="Digite uma nova tarefa..." aria-label="Nova tarefa" />
+      <button onclick="addTodo()" aria-label="Adicionar tarefa">Adicionar</button>
+    </div>
+    <ul id="todo-list" aria-live="polite"></ul>
+  </div>
+
+  <script>
+    const API_URL = "http://localhost:8080/todos";
+
+    async function fetchTodos() {
+      try {
+        const res = await fetch(API_URL);
+        const todos = await res.json();
+
+        const ul = document.getElementById("todo-list");
+        ul.innerHTML = "";
+
+        todos.forEach(todo => {
+          const li = document.createElement("li");
+
+          const text = document.createElement("span");
+          text.textContent = todo.title;
+          text.className = "todo-text" + (todo.done ? " done" : "");
+          li.appendChild(text);
+
+          const doneBtn = document.createElement("button");
+          doneBtn.textContent = todo.done ? "Desfazer" : "Feito";
+          doneBtn.className = "done-btn";
+          if (todo.done) doneBtn.classList.add("undo-btn");
+
+          if (todo.done) {
+            doneBtn.onclick = () => toggleDone(todo.id, false);
+          } else {
+            doneBtn.onclick = () => deleteTodoWithFade(li, todo.id);
+          }
+
+          li.appendChild(doneBtn);
+          ul.appendChild(li);
+        });
+      } catch (error) {
+        alert("Erro ao carregar tarefas");
+        console.error(error);
+      }
+    }
+
+    async function addTodo() {
+      const input = document.getElementById("todo-title");
+      const title = input.value.trim();
+
+      if (!title) {
+        alert("Digite uma tarefa");
+        return;
+      }
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, done: false }),
+        });
+        input.value = "";
+        fetchTodos();
+      } catch (error) {
+        alert("Erro ao adicionar tarefa");
+        console.error(error);
+      }
+    }
+
+    async function toggleDone(id, done) {
+      try {
+        await fetch(`${API_URL}/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ done }),
+        });
+        fetchTodos();
+      } catch (error) {
+        alert("Erro ao atualizar tarefa");
+        console.error(error);
+      }
+    }
+
+    async function deleteTodoWithFade(element, id) {
+      element.classList.add('fade-out');
+      setTimeout(async () => {
+        try {
+          await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+          element.remove(); 
+        } catch (error) {
+          alert("Erro ao deletar tarefa");
+          console.error(error);
+          element.classList.remove('fade-out');
+        }
+      }, 800);
+    }
+
+    fetchTodos();
+  </script>
+</body>
+</html>
